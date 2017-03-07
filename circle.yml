@@ -18,5 +18,4 @@ dependencies:
 
 test:
   override:
-    - $(nix-build -A testScript) $CIRCLE_TEST_REPORTS
-    - nix-build --arg withTests false
+    - nix-build release.nix
