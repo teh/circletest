@@ -1,0 +1,22 @@
+general:
+  build_dir: .
+
+machine:
+  environment:
+    NIX_PROFILE: /nix/var/nix/profiles/ubuntu
+    PATH: $NIX_PROFILE/bin:$PATH
+    NIX_PATH: nixpkgs=/nix/var/nix/profiles/per-user/ubuntu/channels/nixpkgs
+
+dependencies:
+  cache_directories:
+    - ~/nix-cache
+  override:
+    - sudo install -o ubuntu -d /nix ~/nix-cache
+    - mv ~/nix-cache/* /nix || true
+    - which nix-build 2>/dev/null || curl https://nixos.org/nix/install | bash
+    - cp -r /nix/* ~/nix-cache
+
+test:
+  override:
+    - $(nix-build -A testScript) $CIRCLE_TEST_REPORTS
+    - nix-build --arg withTests false
